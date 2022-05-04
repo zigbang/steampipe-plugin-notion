@@ -1,0 +1,1 @@
+# Notion Plugin for Steampipe
