@@ -19,8 +19,15 @@ func tableNotionUser(ctx context.Context) *plugin.Table {
 			{Name: "id", Type: proto.ColumnType_STRING},
 			{Name: "type", Type: proto.ColumnType_STRING},
 			{Name: "name", Type: proto.ColumnType_STRING},
-			{Name: "person_email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Person.Email")},
 			{Name: "avatar_url", Type: proto.ColumnType_STRING},
+
+			// People
+			{Name: "person_email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Person.Email")},
+
+			// Bots
+			{Name: "bot_owner_type", Type: proto.ColumnType_STRING, Transform: transform.FromField("Bot.Owner.Type")},
+			{Name: "bot_owner_workspace", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Bot.Owner.Workspace")},
+			{Name: "bot_owner_user", Type: proto.ColumnType_JSON, Transform: transform.FromField("Bot.Owner.User")},
 		},
 	}
 }
@@ -37,9 +44,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		})
 
 		for _, t := range res.Results {
-			if t.Type == "person" {
-				d.StreamListItem(ctx, t)
-			}
+			d.StreamListItem(ctx, t)
 		}
 
 		if !res.HasMore {
